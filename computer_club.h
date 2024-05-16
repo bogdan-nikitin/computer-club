@@ -7,16 +7,26 @@
 #include "time_util.h"
 
 
-namespace errors {
-    const std::string YOU_SHALL_NOT_PASS = "YouShallNotPass";
-    const std::string NOT_OPEN_YET = "NotOpenYet";
-}
-
-
-constexpr time_util::time_t NO_TABLE = -1;
-
 class computer_club {
 private:
+    inline static const std::string YOU_SHALL_NOT_PASS = "YouShallNotPass";
+    inline static const std::string NOT_OPEN_YET = "NotOpenYet";
+
+    enum class event {
+        INCOMING_CLIENT_CAME = 1,
+        INCOMING_CLIENT_SAT = 2,
+        INCOMING_CLIENT_WAITING = 3,
+        INCOMING_CLIENT_LEFT = 4,
+        OUTGOING_CLIENT_LEFT = 11,
+        OUTGOING_CLIENT_SAT = 12,
+        ERROR = 13
+    };
+
+    void print_event(event e);
+
+
+    static constexpr time_util::time_t NO_TABLE = -1;
+
     struct table_info {
         std::size_t table_num;
         time_util::time_t time = NO_TABLE;
