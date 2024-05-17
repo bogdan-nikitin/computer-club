@@ -32,11 +32,7 @@ computer_club::computer_club(time_util::time_t open_time, time_util::time_t clos
          return;
      }
 
-     print_time(time);
-     output << ' ';
-     print_event(event::INCOMING_CLIENT_CAME);
-     output << client_name << '\n';
-
+     print(time, event::INCOMING_CLIENT_CAME, client_name);
  }
 
 
@@ -55,10 +51,7 @@ void computer_club::client_sat(time_util::time_t time, const std::string& client
 
     table_info.last_time = time;
 
-    print_time(time);
-    output << ' ';
-    print_event(event::INCOMING_CLIENT_SAT);
-    output << ' ' << table_num << '\n';
+    print(time, event::INCOMING_CLIENT_SAT, table_num);
 }
 
 
@@ -76,10 +69,7 @@ void computer_club::client_waiting(time_util::time_t time, const std::string& cl
         client_left_outgoing_event(time, client_it);
         return;
     }
-    print_time(time);
-    output << ' ';
-    print_event(event::INCOMING_CLIENT_WAITING);
-    output << ' ' << client_name << '\n';
+    print(time, event::INCOMING_CLIENT_WAITING, client_name);
     pending_clients.push(client_name);
 }
 
@@ -89,10 +79,7 @@ void computer_club::client_left(time_util::time_t time, const std::string& clien
         error(time, CLIENT_UNKNOWN);
         return;
     }
-    print_time(time);
-    output << ' ';
-    print_event(event::INCOMING_CLIENT_LEFT);
-    output << ' ' << client_name << '\n';
+    print(time, event::INCOMING_CLIENT_LEFT, client_name);
 
     auto table = client_it->second;
     if (table == NO_TABLE) {
@@ -116,10 +103,7 @@ void computer_club::client_left(time_util::time_t time, const std::string& clien
 
 
 void computer_club::client_left_outgoing_event(time_util::time_t time, std::unordered_map<std::string, std::size_t>::iterator client_it) {
-    print_time(time);
-    output << ' ';
-    print_event(event::OUTGOING_CLIENT_LEFT);
-    output << ' ' << client_it->first << '\n';
+    print(time, event::OUTGOING_CLIENT_LEFT, client_it->first);
 
     auto table = client_it->second;
     auto &table_info = tables[table];
@@ -132,17 +116,11 @@ void computer_club::client_sat_outgoing_event(time_util::time_t time, std::strin
     
     tables[table_num].last_time = time;
 
-    print_time(time);
-    output << ' ';
-    print_event(event::OUTGOING_CLIENT_SAT);
-    output << ' ' << table_num << '\n';
+    print(time, event::OUTGOING_CLIENT_SAT, table_num);
 }
 
 void computer_club::error(time_util::time_t time, const std::string& message) {
-    print_time(time);
-    output << ' ';
-    print_event(event::ERROR);
-    output << message << '\n';
+    print(time, event::ERROR, message);
 }
 
 void computer_club::free_table(time_util::time_t time, table_info& table_info) {

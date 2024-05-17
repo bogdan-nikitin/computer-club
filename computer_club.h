@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <string_view>
 #include <functional>
+#include <utility>
 
 #include "time_util.h"
 #include "util.h"
@@ -32,6 +33,14 @@ private:
     void print_event(event e);
     void print_time(time_util::time_t time);
 
+    template<typename ... Args>
+    void print(time_util::time_t time, event e, Args&& ... args) {
+        print_time(time);
+        output << ' ';
+        print_event(e);
+        ((output << ' ' << std::forward<Args>(args)), ...);
+        output << '\n';
+    }
 
     static constexpr time_util::time_t FREE_TABLE = -1;
     static constexpr std::size_t NO_TABLE = 0;
