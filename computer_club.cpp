@@ -3,6 +3,8 @@
 #include "computer_club.h"
 #include "time_util.h"
 
+static const std::size_t MINUTES_IN_HOUR = 60;
+
 void computer_club::print_time(time_util::time_t time) {
     time_util::print_time(time, output);
 }
@@ -44,11 +46,15 @@ void computer_club::client_sat(time_util::time_t time, const std::string& client
         error(time, CLIENT_UNKNOWN);
         return;
     }
-    auto result = tables.try_emplace(table_num, client_it->first);
-    if (!result.second) {
+
+    auto &table_info = tables[table_num];
+    if (table_info.last_time != FREE_TABLE) {
         error(time, PLACE_IS_BUSY);
         return;
     }
+
+    table_info.last_time = time;
+
     print_time(time);
     output << ' ';
     print_event(event::INCOMING_CLIENT_SAT);
@@ -67,7 +73,7 @@ void computer_club::client_waiting(time_util::time_t time, const std::string& cl
         return;
     }
     if (pending_clients.size() == table_count) {
-        client_left_outgoing_event(time, client_name);
+        client_left_outgoing_event(time, client_it);
         return;
     }
     print_time(time);
@@ -88,20 +94,42 @@ void computer_club::client_left(time_util::time_t time, const std::string& clien
     print_event(event::INCOMING_CLIENT_LEFT);
     output << ' ' << client_name << '\n';
 
-    auto table_info = client_it->second;
+    auto table = client_it->second;
+    if (table == NO_TABLE) {
+        return;
+    }
 
     clients.erase(client_it);
 
-    auto table_time = table_info.time;
-    if (table_time != NO_TABLE) {
+    auto &table_info = tables[table];
+    if (table_info.last_time == FREE_TABLE) {
         return;
     }
-    auto table = table_info.table_num;
-    tables.erase(table);
+    free_table(time, table_info);
     if (pending_clients.empty()) {
         return;
     }
     auto next_client = pending_clients.front();
     pending_clients.pop();
     client_sat_outgoing_event(time, next_client, table);
+}
+
+
+void computer_club::client_left_outgoing_event(time_util::time_t time, std::unordered_map<std::string, std::size_t>::iterator client_it) {
+    print_time(time);
+    output << ' ';
+    print_event(event::OUTGOING_CLIENT_LEFT);
+    output << ' ' << client_it->first << '\n';
+
+    auto table = client_it->second;
+    auto &table_info = tables[table];
+    free_table(time, table_info);
+}
+
+
+void computer_club::free_table(time_util::time_t time, table_info& table_info) {
+    time_util::time_t time_delta = time - table_info.last_time;
+    table_info.gain += (time_delta + MINUTES_IN_HOUR - 1) / MINUTES_IN_HOUR;
+    table_info.total_time += time_delta;
+    table_info.last_time = FREE_TABLE;
 }

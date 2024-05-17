@@ -29,16 +29,18 @@ private:
     void print_time(time_util::time_t time);
 
 
-    static constexpr time_util::time_t NO_TABLE = -1;
+    static constexpr time_util::time_t FREE_TABLE = -1;
+    static constexpr std::size_t NO_TABLE = 0;
 
     struct table_info {
-        std::size_t table_num;
-        time_util::time_t time = NO_TABLE;
+        time_util::time_t last_time = FREE_TABLE;
+        time_util::time_t total_time = 0;
+        std::size_t gain = 0;
     };
 
     std::queue<std::string_view> pending_clients;
-    std::unordered_map<std::string, table_info> clients;
-    std::unordered_map<std::size_t, std::string_view> tables;
+    std::unordered_map<std::string, std::size_t> clients;
+    std::unordered_map<std::size_t, table_info> tables;
     std::size_t table_count;
 
     std::ostream& output;
@@ -48,9 +50,11 @@ private:
 
     std::size_t hour_cost;
 
-    void client_left_outgoing_event(time_util::time_t time, std::string_view name);
+    void client_left_outgoing_event(time_util::time_t time, std::unordered_map<std::string, std::size_t>::iterator client_it);
     void client_sat_outgoing_event(time_util::time_t time, std::string_view name, std::size_t table_num);
     void error(time_util::time_t time, const std::string& message);
+
+    void free_table(time_util::time_t time, table_info& table_info);
 public:
     void client_came(time_util::time_t time, std::string client_name);
     void client_sat(time_util::time_t time, const std::string& client_name, std::size_t table_num);
