@@ -1,6 +1,8 @@
 #include <type_traits>
 #include <vector>
 #include <ranges>
+#include <iostream>
+#include <utility>
 
 #include "computer_club.h"
 #include "time_util.h"
@@ -146,3 +148,29 @@ void computer_club::close() {
         output << i << ' ' << table_info.gain << ' ' << table_info.total_time << '\n';
     }
 }
+
+void computer_club::read_event(std::istream& in) {
+    time_util::time_t time = time_util::read_time(in);
+    std::size_t id;
+    in >> id;
+    std::string client_name;
+    in >> client_name;
+    switch (id) {
+        case 1: 
+            client_came(time, std::move(client_name));
+            break;
+        case 2:
+            std::size_t table;
+            in >> table;
+            client_sat(time, client_name, table);
+            break;
+        case 3:
+            client_waiting(time, client_name);
+            break;
+        case 4:
+            client_left(time, client_name);
+            break;
+    }
+}
+
+
