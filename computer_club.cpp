@@ -11,8 +11,8 @@ void computer_club::print_event(event e) {
     output << static_cast<std::underlying_type_t<event>>(e);
 }
 
-computer_club::computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::ostream& output)
-    : open_time{open_time}, close_time{close_time}, hour_cost{hour_cost}, output{output} {
+computer_club::computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::size_t table_count, std::ostream& output)
+    : open_time{open_time}, close_time{close_time}, hour_cost{hour_cost}, output{output}, table_count{table_count} {
     print_time(open_time);
     output << '\n';
 }
@@ -52,6 +52,27 @@ void computer_club::client_sat(time_util::time_t time, const std::string& client
     print_time(time);
     output << ' ';
     print_event(event::INCOMING_CLIENT_SAT);
+    output << ' ' << table_num << '\n';
+}
+
+
+void computer_club::client_waiting(time_util::time_t time, const std::string& client_name) {
+    auto client_it = clients.find(client_name);
+    if (client_it == clients.end()) {
+        error(time, CLIENT_UNKNOWN);
+        return;
+    }
+    if (pending_clients.empty()) {
+        error(time, I_CAN_WAIT_NO_LONGER);
+        return;
+    }
+    if (pending_clients.size() == table_count) {
+        client_left_outgoing_event(time, client_name);
+        return;
+    }
+    print_time(time);
     output << ' ';
-    output << table_num << '\n';
+    print_event(event::INCOMING_CLIENT_WAITING);
+    output << ' ' << client_name << '\n';
+    pending_clients.push(client_name);
 }

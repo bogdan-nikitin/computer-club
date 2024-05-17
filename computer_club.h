@@ -13,6 +13,7 @@ private:
     inline static const std::string NOT_OPEN_YET = "NotOpenYet";
     inline static const std::string CLIENT_UNKNOWN = "ClientUnknown";
     inline static const std::string PLACE_IS_BUSY = "PlaceIsBusy";
+    inline static const std::string I_CAN_WAIT_NO_LONGER = "ICanWaitNoLonger!";
 
     enum class event {
         INCOMING_CLIENT_CAME = 1,
@@ -38,6 +39,7 @@ private:
     std::queue<std::string_view> pending_clients;
     std::unordered_map<std::string, table_info> clients;
     std::unordered_map<std::size_t, std::string_view> tables;
+    std::size_t table_count;
 
     std::ostream& output;
 
@@ -55,5 +57,5 @@ public:
     void client_waiting(time_util::time_t time, const std::string& client_name);
     void client_left(time_util::time_t time, const std::string& client_name);
 
-    computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::ostream& output);
+    computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::size_t table_count, std::ostream& output);
 };
