@@ -138,6 +138,13 @@ void computer_club::client_sat_outgoing_event(time_util::time_t time, std::strin
     output << ' ' << table_num << '\n';
 }
 
+void computer_club::error(time_util::time_t time, const std::string& message) {
+    print_time(time);
+    output << ' ';
+    print_event(event::ERROR);
+    output << message << '\n';
+}
+
 void computer_club::free_table(time_util::time_t time, table_info& table_info) {
     time_util::time_t time_delta = time - table_info.last_time;
     table_info.gain += (time_delta + MINUTES_IN_HOUR - 1) / MINUTES_IN_HOUR;
