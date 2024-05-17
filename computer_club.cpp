@@ -1,4 +1,6 @@
 #include <type_traits>
+#include <vector>
+#include <ranges>
 
 #include "computer_club.h"
 #include "time_util.h"
@@ -128,4 +130,19 @@ void computer_club::free_table(time_util::time_t time, table_info& table_info) {
     table_info.gain += (time_delta + MINUTES_IN_HOUR - 1) / MINUTES_IN_HOUR;
     table_info.total_time += time_delta;
     table_info.last_time = FREE_TABLE;
+}
+
+void computer_club::close() {
+    auto keys = std::views::keys(clients);
+    std::vector<std::string_view> clients_ordered{keys.begin(), keys.end()};
+    std::ranges::sort(clients_ordered);
+    for (auto name : clients_ordered) {
+        client_left_outgoing_event(close_time, clients.find(name));
+    }
+    print_time(close_time);
+    output << '\n';
+    for (std::size_t i = 1; i <= table_count; ++i) {
+        auto table_info = tables[i];
+        output << i << ' ' << table_info.gain << ' ' << table_info.total_time << '\n';
+    }
 }
