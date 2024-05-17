@@ -3,6 +3,9 @@
 #include "computer_club.h"
 #include "time_util.h"
 
+void computer_club::print_time(time_util::time_t time) {
+    time_util::print_time(time, output);
+}
 
 void computer_club::print_event(event e) {
     output << static_cast<std::underlying_type_t<event>>(e);
@@ -10,7 +13,7 @@ void computer_club::print_event(event e) {
 
 computer_club::computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::ostream& output)
     : open_time{open_time}, close_time{close_time}, hour_cost{hour_cost}, output{output} {
-    time_util::print_time(open_time, output);
+    print_time(open_time);
     output << '\n';
 }
 
@@ -27,9 +30,28 @@ computer_club::computer_club(time_util::time_t open_time, time_util::time_t clos
          return;
      }
 
-     time_util::print_time(time, output);
+     print_time(time);
      output << ' ';
      print_event(event::INCOMING_CLIENT_CAME);
      output << client_name << '\n';
 
  }
+
+
+void computer_club::client_sat(time_util::time_t time, const std::string& client_name, std::size_t table_num) {
+    auto client_it = clients.find(client_name);
+    if (client_it == clients.end()) {
+        error(time, CLIENT_UNKNOWN);
+        return;
+    }
+    auto result = tables.try_emplace(table_num, client_it->first);
+    if (!result.second) {
+        error(time, PLACE_IS_BUSY);
+        return;
+    }
+    print_time(time);
+    output << ' ';
+    print_event(event::INCOMING_CLIENT_SAT);
+    output << ' ';
+    output << table_num << '\n';
+}

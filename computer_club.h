@@ -11,6 +11,8 @@ class computer_club {
 private:
     inline static const std::string YOU_SHALL_NOT_PASS = "YouShallNotPass";
     inline static const std::string NOT_OPEN_YET = "NotOpenYet";
+    inline static const std::string CLIENT_UNKNOWN = "ClientUnknown";
+    inline static const std::string PLACE_IS_BUSY = "PlaceIsBusy";
 
     enum class event {
         INCOMING_CLIENT_CAME = 1,
@@ -23,6 +25,7 @@ private:
     };
 
     void print_event(event e);
+    void print_time(time_util::time_t time);
 
 
     static constexpr time_util::time_t NO_TABLE = -1;
@@ -34,6 +37,7 @@ private:
 
     std::queue<std::string_view> pending_clients;
     std::unordered_map<std::string, table_info> clients;
+    std::unordered_map<std::size_t, std::string_view> tables;
 
     std::ostream& output;
 
