@@ -126,6 +126,17 @@ void computer_club::client_left_outgoing_event(time_util::time_t time, std::unor
     free_table(time, table_info);
 }
 
+void computer_club::client_sat_outgoing_event(time_util::time_t time, std::string_view name, std::size_t table_num) {
+    auto client_it = clients.find(name);
+    client_it->second = table_num;
+    
+    tables[table_num].last_time = time;
+
+    print_time(time);
+    output << ' ';
+    print_event(event::OUTGOING_CLIENT_SAT);
+    output << ' ' << table_num << '\n';
+}
 
 void computer_club::free_table(time_util::time_t time, table_info& table_info) {
     time_util::time_t time_delta = time - table_info.last_time;

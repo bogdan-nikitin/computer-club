@@ -1,11 +1,15 @@
+#ifndef COMPUTER_CLUB_H
+#define COMPUTER_CLUB_H
+
 #include <iostream>
 #include <string>
 #include <queue>
 #include <unordered_map>
 #include <string_view>
+#include <functional>
 
 #include "time_util.h"
-
+#include "util.h"
 
 class computer_club {
 private:
@@ -39,7 +43,7 @@ private:
     };
 
     std::queue<std::string_view> pending_clients;
-    std::unordered_map<std::string, std::size_t> clients;
+    std::unordered_map<std::string, std::size_t, util::string_hash, std::equal_to<>> clients;
     std::unordered_map<std::size_t, table_info> tables;
     std::size_t table_count;
 
@@ -62,4 +66,6 @@ public:
     void client_left(time_util::time_t time, const std::string& client_name);
 
     computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::size_t table_count, std::ostream& output);
+    void close();
 };
+#endif
