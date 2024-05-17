@@ -76,3 +76,32 @@ void computer_club::client_waiting(time_util::time_t time, const std::string& cl
     output << ' ' << client_name << '\n';
     pending_clients.push(client_name);
 }
+
+void computer_club::client_left(time_util::time_t time, const std::string& client_name) {
+    auto client_it = clients.find(client_name);
+    if (client_it == clients.end()) {
+        error(time, CLIENT_UNKNOWN);
+        return;
+    }
+    print_time(time);
+    output << ' ';
+    print_event(event::INCOMING_CLIENT_LEFT);
+    output << ' ' << client_name << '\n';
+
+    auto table_info = client_it->second;
+
+    clients.erase(client_it);
+
+    auto table_time = table_info.time;
+    if (table_time != NO_TABLE) {
+        return;
+    }
+    auto table = table_info.table_num;
+    tables.erase(table);
+    if (pending_clients.empty()) {
+        return;
+    }
+    auto next_client = pending_clients.front();
+    pending_clients.pop();
+    client_sat_outgoing_event(time, next_client, table);
+}
