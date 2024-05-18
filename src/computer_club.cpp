@@ -148,18 +148,20 @@ void computer_club::close() {
     }
 }
 
-computer_club::read_result computer_club::read_event(std::istream& in) {
+time_util::time_t computer_club::read_event(std::istream& in, time_util::time_t previous_event_time) {
     time_util::time_t time = time_util::read_time(in);
+    if (time == time_util::INVALID_TIME) {
+        return time_util::INVALID_TIME;
+    }
+    if (previous_event_time > time) {
+        return time_util::INVALID_TIME;
+    }
     std::size_t id;
     in >> id;
-    if (in.eof()) {
-        in.clear();
-        return read_result::END;
-    }
     std::string client_name;
     in >> client_name;
     if (in.fail() || in.bad()) {
-        return read_result::FAIL;
+        return time_util::INVALID_TIME;
     }
     switch (id) {
         case 1: 
@@ -169,7 +171,7 @@ computer_club::read_result computer_club::read_event(std::istream& in) {
             std::size_t table;
             in >> table;
             if (in.fail() || in.bad()) {
-                return read_result::FAIL;
+                return time_util::INVALID_TIME;
             }
             client_sat(time, client_name, table);
             break;
@@ -179,8 +181,10 @@ computer_club::read_result computer_club::read_event(std::istream& in) {
         case 4:
             client_left(time, client_name);
             break;
+        default:
+            return time_util::INVALID_TIME;
     }
-    return read_result::OK;
+    return time;
 }
 
 
