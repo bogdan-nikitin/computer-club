@@ -51,7 +51,7 @@ private:
         std::size_t gain = 0;
     };
 
-    std::queue<std::string_view> pending_clients;
+    std::queue<std::string> pending_clients;
     using clients_map_t = std::unordered_map<std::string, std::size_t, util::string_hash, std::equal_to<>>;
     clients_map_t clients;
     std::unordered_map<std::size_t, table_info> tables;
@@ -66,7 +66,7 @@ private:
     std::size_t hour_cost;
 
     void client_left_outgoing_event(time_util::time_t time, clients_map_t::iterator client_it);
-    void client_sat_outgoing_event(time_util::time_t time, std::string_view client_name, std::size_t table);
+    void client_sat_outgoing_event(time_util::time_t time, const std::string& client_name, std::size_t table);
     void error(time_util::time_t time, const std::string& message);
 
     void free_table(time_util::time_t time, table_info& table_info);

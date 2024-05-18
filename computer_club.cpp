@@ -3,6 +3,7 @@
 #include <ranges>
 #include <iostream>
 #include <utility>
+#include <string_view>
 
 #include "computer_club.h"
 #include "time_util.h"
@@ -110,12 +111,12 @@ void computer_club::client_left_outgoing_event(time_util::time_t time, clients_m
     free_table(time, table_info);
 }
 
-void computer_club::client_sat_outgoing_event(time_util::time_t time, std::string_view client_name, std::size_t table) {
+void computer_club::client_sat_outgoing_event(time_util::time_t time, const std::string& client_name, std::size_t table) {
     auto client_it = clients.find(client_name);
 
     take_table(time, client_it, table);
 
-    print(time, event::OUTGOING_CLIENT_SAT, table);
+    print(time, event::OUTGOING_CLIENT_SAT, client_it->first, table);
 }
 
 void computer_club::error(time_util::time_t time, const std::string& message) {
@@ -124,7 +125,7 @@ void computer_club::error(time_util::time_t time, const std::string& message) {
 
 void computer_club::free_table(time_util::time_t time, table_info& table_info) {
     time_util::time_t time_delta = time - table_info.last_time;
-    table_info.gain += (time_delta + MINUTES_IN_HOUR - 1) / MINUTES_IN_HOUR;
+    table_info.gain += (time_delta + MINUTES_IN_HOUR - 1) / MINUTES_IN_HOUR * hour_cost;
     table_info.total_time += time_delta;
     table_info.last_time = FREE_TABLE;
     --busy_tables;
@@ -141,7 +142,9 @@ void computer_club::close() {
     output << '\n';
     for (std::size_t i = 1; i <= table_count; ++i) {
         auto table_info = tables[i];
-        output << i << ' ' << table_info.gain << ' ' << table_info.total_time << '\n';
+        output << i << ' ' << table_info.gain << ' ';
+        print_time(table_info.total_time);
+        output << '\n';
     }
 }
 
@@ -149,6 +152,9 @@ void computer_club::read_event(std::istream& in) {
     time_util::time_t time = time_util::read_time(in);
     std::size_t id;
     in >> id;
+    if (in.eof()) {
+        return;
+    }
     std::string client_name;
     in >> client_name;
     switch (id) {
