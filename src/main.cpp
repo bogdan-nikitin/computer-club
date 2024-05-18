@@ -18,15 +18,16 @@ enum class read_result {
 static read_result read_line(std::istream& in, auto reader) {
     std::string line;
     std::getline(in, line);
-    if (in.eof() || in.fail() || in.bad()) {
+    if (in.eof() || line.empty()) {
+        return read_result::END;
+    }
+    if (in.fail() || in.bad()) {
         std::cout << line << '\n';
         return read_result::FAIL;
     }
-    if (line.empty()) {
-        return read_result::END;
-    }
     std::stringstream stream{line};
     if (!reader(stream) || stream.fail() || stream.bad()) {
+        std::cout << "S\n";
         std::cout << line << '\n';
         return read_result::FAIL;
     }
