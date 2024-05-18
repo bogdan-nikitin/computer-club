@@ -59,6 +59,45 @@ TEST(computer_club, unknown) {
               output.view());
 }
 
+TEST(computer_club, gain) {
+    std::stringstream output;
+    computer_club computer_club{as_time(10, 0), as_time(19, 0), 1, 3, output};
+
+    computer_club.client_came(as_time(10, 5), "client1");
+    computer_club.client_sat(as_time(10, 30), "client1", 1);
+    computer_club.client_left(as_time(11, 30), "client1");
+
+    computer_club.client_came(as_time(12, 5), "client2");
+    computer_club.client_sat(as_time(12, 30), "client2", 2);
+    computer_club.client_left(as_time(13, 29), "client2");
+
+    computer_club.client_came(as_time(14, 5), "client3");
+    computer_club.client_sat(as_time(14, 30), "client3", 3);
+    computer_club.client_left(as_time(15, 31), "client3");
+
+    computer_club.close();
+    EXPECT_EQ(std::string_view{"10:00\n"
+
+                               "10:05 1 client1\n"
+                               "10:30 2 client1 1\n"
+                               "11:30 4 client1\n"
+
+                               "12:05 1 client2\n"
+                               "12:30 2 client2 2\n"
+                               "13:29 4 client2\n"
+
+                               "14:05 1 client3\n"
+                               "14:30 2 client3 3\n"
+                               "15:31 4 client3\n"
+
+                               "19:00\n"
+                               "1 1 01:00\n"
+                               "2 1 00:59\n"
+                               "3 2 01:01\n"
+                               },
+              output.view());
+}
+
 TEST(computer_club, example) {
     std::stringstream output;
     computer_club computer_club{as_time(9, 0), as_time(19, 0), 10, 3, output};
