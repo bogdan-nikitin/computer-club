@@ -36,13 +36,41 @@ TEST(computer_club, empty) {
         as_time(1, 1), 
         as_time(20, 20),
         1,
-        0,
+        1,
         output
     };
     computer_club.close();
     EXPECT_EQ(std::string_view{
 "01:01\n"
-"20:20\n"},
+"20:20\n"
+"1 0 00:00\n"
+},
+    output.view());
+}
+
+TEST(computer_club, unknown) {
+    std::stringstream output;
+    computer_club computer_club{
+        as_time(10, 0), 
+        as_time(11, 0),
+        1,
+        1,
+        output
+    };
+    computer_club.client_sat(as_time(10, 1), "unknown", 1);
+    computer_club.client_waiting(as_time(10, 2), "unknown");
+    computer_club.client_left(as_time(10, 3), "unknown");
+    computer_club.close();
+    EXPECT_EQ(std::string_view{
+"10:00\n"
+"10:01 2 unknown 1\n"
+"10:01 13 ClientUnknown\n"
+"10:02 3 unknown\n"
+"10:02 13 ClientUnknown\n"
+"10:03 4 unknown\n"
+"10:03 13 ClientUnknown\n"
+"11:00\n"
+"1 0 00:00\n"},
     output.view());
 }
 
