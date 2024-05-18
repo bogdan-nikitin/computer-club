@@ -10,8 +10,8 @@
 Пример сборки и запуска решения:
 ```bash
 cmake --preset Release -DTREAT_WARNINGS_AS_ERRORS=ON -Dtest=ON -S .
-cmake --build cmake-build-SanitizedDebug
-./cmake-build-SanitizedDebug/main test_files/example.txt
+cmake --build cmake-build-Release
+./cmake-build-Release/main test_files/example.txt
 ```
 
 Пример сборки и запуска тестов с использованием vcpkg (вместо `$YOUR_VCPKG_PATH` нужно указать путь до vcpkg):

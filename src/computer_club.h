@@ -5,8 +5,8 @@
 #include "util.h"
 
 #include <queue>
-
 #include <functional>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -55,8 +55,7 @@ private:
     std::queue<std::string> pending_clients;
     using clients_map_t = std::unordered_map<std::string, std::size_t, util::string_hash, std::equal_to<>>;
     clients_map_t clients;
-    std::unordered_map<std::size_t, table_info> tables;
-    std::size_t table_count;
+    std::vector<table_info> tables;
     std::size_t busy_tables = 0;
 
     std::ostream& output;
