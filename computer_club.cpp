@@ -39,21 +39,22 @@ computer_club::computer_club(time_util::time_t open_time, time_util::time_t clos
  }
 
 
-void computer_club::client_sat(time_util::time_t time, const std::string& client_name, std::size_t table_num) {
-    print(time, event::INCOMING_CLIENT_SAT, client_name, table_num);
+void computer_club::client_sat(time_util::time_t time, const std::string& client_name, std::size_t table) {
+    print(time, event::INCOMING_CLIENT_SAT, client_name, table);
     auto client_it = clients.find(client_name);
     if (client_it == clients.end()) {
         error(time, CLIENT_UNKNOWN);
         return;
     }
 
-    auto &table_info = tables[table_num];
+    auto &table_info = tables[table];
     if (table_info.last_time != FREE_TABLE) {
         error(time, PLACE_IS_BUSY);
         return;
     }
 
-    table_info.last_time = time;
+    take_table(time, client_it, table);
+    ++busy_tables;
 }
 
 
@@ -64,7 +65,7 @@ void computer_club::client_waiting(time_util::time_t time, const std::string& cl
         error(time, CLIENT_UNKNOWN);
         return;
     }
-    if (pending_clients.empty()) {
+    if (busy_tables < table_count) {
         error(time, I_CAN_WAIT_NO_LONGER);
         return;
     }
@@ -91,9 +92,6 @@ void computer_club::client_left(time_util::time_t time, const std::string& clien
     clients.erase(client_it);
 
     auto &table_info = tables[table];
-    if (table_info.last_time == FREE_TABLE) {
-        return;
-    }
     free_table(time, table_info);
     if (pending_clients.empty()) {
         return;
@@ -104,7 +102,7 @@ void computer_club::client_left(time_util::time_t time, const std::string& clien
 }
 
 
-void computer_club::client_left_outgoing_event(time_util::time_t time, std::unordered_map<std::string, std::size_t>::iterator client_it) {
+void computer_club::client_left_outgoing_event(time_util::time_t time, clients_map_t::iterator client_it) {
     print(time, event::OUTGOING_CLIENT_LEFT, client_it->first);
 
     auto table = client_it->second;
@@ -112,13 +110,12 @@ void computer_club::client_left_outgoing_event(time_util::time_t time, std::unor
     free_table(time, table_info);
 }
 
-void computer_club::client_sat_outgoing_event(time_util::time_t time, std::string_view name, std::size_t table_num) {
-    auto client_it = clients.find(name);
-    client_it->second = table_num;
-    
-    tables[table_num].last_time = time;
+void computer_club::client_sat_outgoing_event(time_util::time_t time, std::string_view client_name, std::size_t table) {
+    auto client_it = clients.find(client_name);
 
-    print(time, event::OUTGOING_CLIENT_SAT, table_num);
+    take_table(time, client_it, table);
+
+    print(time, event::OUTGOING_CLIENT_SAT, table);
 }
 
 void computer_club::error(time_util::time_t time, const std::string& message) {
@@ -130,6 +127,7 @@ void computer_club::free_table(time_util::time_t time, table_info& table_info) {
     table_info.gain += (time_delta + MINUTES_IN_HOUR - 1) / MINUTES_IN_HOUR;
     table_info.total_time += time_delta;
     table_info.last_time = FREE_TABLE;
+    --busy_tables;
 }
 
 void computer_club::close() {
@@ -172,3 +170,7 @@ void computer_club::read_event(std::istream& in) {
 }
 
 
+void computer_club::take_table(time_util::time_t time, clients_map_t::iterator client_it, std::size_t table) {
+    client_it->second = table;
+    tables[table].last_time = time;
+}
