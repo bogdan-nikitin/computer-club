@@ -20,7 +20,8 @@ void computer_club::print_event(event e) {
     output << static_cast<std::underlying_type_t<event>>(e);
 }
 
-computer_club::computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::size_t table_count, std::ostream& output)
+computer_club::computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost,
+                             std::size_t table_count, std::ostream& output)
     : open_time{open_time},
       close_time{close_time},
       hour_cost{hour_cost},

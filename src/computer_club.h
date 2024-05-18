@@ -5,13 +5,14 @@
 #include "util.h"
 
 #include <queue>
+
 #include <functional>
-#include <vector>
 #include <iostream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 class computer_club {
 private:

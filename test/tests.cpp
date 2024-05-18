@@ -32,14 +32,7 @@ TEST(time, bad_format) {
 }
 
 TEST(time, correct) {
-    auto correct = std::to_array({
-        "23:59",
-        "01:02",
-        "13:08",
-        "15:25",
-        "00:00",
-        "04:54"
-    });
+    auto correct = std::to_array({"23:59", "01:02", "13:08", "15:25", "00:00", "04:54"});
     for (auto s : correct) {
         std::stringstream in{s};
         std::stringstream out;
@@ -67,12 +60,12 @@ TEST(computer_club, you_shall_not_pass) {
     computer_club.client_came(as_time(10, 10), "client1");
     computer_club.close();
     EXPECT_EQ(std::string_view{"10:00\n"
-            "10:05 1 client1\n"
-            "10:10 1 client1\n"
-            "10:10 13 YouShallNotPass\n"
-            "11:00 11 client1\n"
-            "11:00\n"
-            "1 0 00:00\n"},
+                               "10:05 1 client1\n"
+                               "10:10 1 client1\n"
+                               "10:10 13 YouShallNotPass\n"
+                               "11:00 11 client1\n"
+                               "11:00\n"
+                               "1 0 00:00\n"},
               output.view());
 }
 
@@ -129,8 +122,7 @@ TEST(computer_club, gain) {
                                "19:00\n"
                                "1 1 01:00\n"
                                "2 1 00:59\n"
-                               "3 2 01:01\n"
-                               },
+                               "3 2 01:01\n"},
               output.view());
 }
 
@@ -157,8 +149,7 @@ TEST(computer_club, not_empty_queue) {
                                "19:00 11 client2\n"
 
                                "19:00\n"
-                               "1 8 08:00\n"
-                               },
+                               "1 8 08:00\n"},
               output.view());
 }
 
@@ -204,8 +195,7 @@ TEST(computer_club, change_table) {
                                "19:00\n"
                                "1 1 01:00\n"
                                "2 2 02:00\n"
-                               "3 3 03:00\n"
-                               },
+                               "3 3 03:00\n"},
               output.view());
 }
 
