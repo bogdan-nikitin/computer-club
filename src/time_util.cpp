@@ -10,6 +10,9 @@ time_util::time_t time_util::read_time(std::istream &in) {
     std::int16_t minutes;
     std::int16_t hours;
     in >> hours >> delimiter >> minutes;
+    if (delimiter != ':' || hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60) {
+        return INVALID_TIME;
+    }
     return as_time(hours, minutes);
 } 
 

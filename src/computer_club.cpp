@@ -148,15 +148,21 @@ void computer_club::close() {
     }
 }
 
-void computer_club::read_event(std::istream& in) {
+computer_club::read_result computer_club::read_event(std::istream& in) {
     time_util::time_t time = time_util::read_time(in);
     std::size_t id;
     in >> id;
     if (in.eof()) {
-        return;
+        return read_result::END;
     }
     std::string client_name;
     in >> client_name;
+    if (in.bad()) {
+        return read_result::ERROR;
+    }
+    if (in.fail()) {
+        return read_result::FAIL;
+    }
     switch (id) {
         case 1: 
             client_came(time, std::move(client_name));
@@ -164,6 +170,12 @@ void computer_club::read_event(std::istream& in) {
         case 2:
             std::size_t table;
             in >> table;
+            if (in.bad()) {
+                return read_result::ERROR;
+            }
+            if (in.fail()) {
+                return read_result::FAIL;
+            }
             client_sat(time, client_name, table);
             break;
         case 3:
@@ -173,6 +185,7 @@ void computer_club::read_event(std::istream& in) {
             client_left(time, client_name);
             break;
     }
+    return read_result::OK;
 }
 
 

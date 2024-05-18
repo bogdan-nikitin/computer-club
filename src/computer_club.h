@@ -79,6 +79,14 @@ public:
 
     computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::size_t table_count, std::ostream& output);
     void close();
-    void read_event(std::istream& in);
+
+    enum class read_result {
+        OK,
+        FAIL,
+        ERROR,
+        END
+    };
+
+    read_result read_event(std::istream& in);
 };
 #endif

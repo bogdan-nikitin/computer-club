@@ -7,6 +7,7 @@
 
 namespace time_util {
     using time_t = std::int16_t;
+    constexpr time_t INVALID_TIME = -1;
 
     time_t read_time(std::istream& in);
     void print_time(time_t time, std::ostream& out);
