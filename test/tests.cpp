@@ -7,6 +7,21 @@ using namespace time_util;
 
 #include <gtest/gtest.h>
 
+TEST(correctness, empty) {
+    std::stringstream output;
+    computer_club computer_club{
+        as_time(1, 1), 
+        as_time(20, 20),
+        1,
+        0,
+        output
+    };
+    computer_club.close();
+    EXPECT_EQ(std::string_view{
+"01:01\n"
+"20:20\n"},
+    output.view());
+}
 
 TEST(correctness, example) {
     std::stringstream output;
@@ -175,4 +190,5 @@ TEST(correctness, sort) {
 "12 1 00:37\n"}
             , output.view());
 }
+
 
