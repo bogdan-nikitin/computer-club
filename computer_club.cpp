@@ -25,6 +25,7 @@ computer_club::computer_club(time_util::time_t open_time, time_util::time_t clos
 
  
  void computer_club::client_came(time_util::time_t time, std::string client_name) {
+     print(time, event::INCOMING_CLIENT_CAME, client_name);
      if (time < open_time) {
          error(time, NOT_OPEN_YET);
          return;
@@ -35,12 +36,11 @@ computer_club::computer_club(time_util::time_t open_time, time_util::time_t clos
          error(time, YOU_SHALL_NOT_PASS);
          return;
      }
-
-     print(time, event::INCOMING_CLIENT_CAME, client_name);
  }
 
 
 void computer_club::client_sat(time_util::time_t time, const std::string& client_name, std::size_t table_num) {
+    print(time, event::INCOMING_CLIENT_SAT, client_name, table_num);
     auto client_it = clients.find(client_name);
     if (client_it == clients.end()) {
         error(time, CLIENT_UNKNOWN);
@@ -54,12 +54,11 @@ void computer_club::client_sat(time_util::time_t time, const std::string& client
     }
 
     table_info.last_time = time;
-
-    print(time, event::INCOMING_CLIENT_SAT, table_num);
 }
 
 
 void computer_club::client_waiting(time_util::time_t time, const std::string& client_name) {
+    print(time, event::INCOMING_CLIENT_WAITING, client_name);
     auto client_it = clients.find(client_name);
     if (client_it == clients.end()) {
         error(time, CLIENT_UNKNOWN);
@@ -73,17 +72,16 @@ void computer_club::client_waiting(time_util::time_t time, const std::string& cl
         client_left_outgoing_event(time, client_it);
         return;
     }
-    print(time, event::INCOMING_CLIENT_WAITING, client_name);
     pending_clients.push(client_name);
 }
 
 void computer_club::client_left(time_util::time_t time, const std::string& client_name) {
+    print(time, event::INCOMING_CLIENT_LEFT, client_name);
     auto client_it = clients.find(client_name);
     if (client_it == clients.end()) {
         error(time, CLIENT_UNKNOWN);
         return;
     }
-    print(time, event::INCOMING_CLIENT_LEFT, client_name);
 
     auto table = client_it->second;
     if (table == NO_TABLE) {
