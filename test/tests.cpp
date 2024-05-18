@@ -40,6 +40,22 @@ TEST(computer_club, empty) {
               output.view());
 }
 
+TEST(computer_club, you_shall_not_pass) {
+    std::stringstream output;
+    computer_club computer_club{as_time(10, 0), as_time(11, 0), 1, 1, output};
+    computer_club.client_came(as_time(10, 5), "client1");
+    computer_club.client_came(as_time(10, 10), "client1");
+    computer_club.close();
+    EXPECT_EQ(std::string_view{"10:00\n"
+            "10:05 1 client1\n"
+            "10:10 1 client1\n"
+            "10:10 13 YouShallNotPass\n"
+            "11:00 11 client1\n"
+            "11:00\n"
+            "1 0 00:00\n"},
+              output.view());
+}
+
 TEST(computer_club, unknown) {
     std::stringstream output;
     computer_club computer_club{as_time(10, 0), as_time(11, 0), 1, 1, output};

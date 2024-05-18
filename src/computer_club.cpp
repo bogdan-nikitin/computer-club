@@ -107,6 +107,9 @@ void computer_club::client_left_outgoing_event(time_util::time_t time, clients_m
     print(time, event::OUTGOING_CLIENT_LEFT, client_it->first);
 
     auto table = client_it->second;
+    if (table == 0) {
+        return;
+    }
     auto& table_info = tables[table - 1];
     free_table(time, table_info);
 }
