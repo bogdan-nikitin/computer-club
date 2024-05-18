@@ -39,6 +39,10 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
     std::ifstream in{argv[1]};
+    if (in.bad() || in.fail()) {
+        std::perror("Error opening file");
+        return EXIT_FAILURE;
+    }
 
     std::int32_t table_count;
     if (read_line(in, [&](auto& in) {
