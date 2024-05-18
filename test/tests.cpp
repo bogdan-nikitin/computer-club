@@ -105,16 +105,16 @@ TEST(computer_club, change_table) {
     computer_club.client_came(as_time(10, 5), "client1");
     computer_club.client_came(as_time(10, 10), "client2");
 
-    computer_club.client_sat(as_time(10, 30), "client1", 1);
-    computer_club.client_sat(as_time(11, 0), "client2", 2);
+    computer_club.client_sat(as_time(10, 30), "client1", 2);
+    computer_club.client_sat(as_time(11, 0), "client2", 3);
 
-    computer_club.client_sat(as_time(11, 30), "client1", 1);
-    computer_club.client_sat(as_time(12, 00), "client1", 2);
-    computer_club.client_sat(as_time(12, 30), "client1", 3);
+    computer_club.client_sat(as_time(11, 30), "client1", 2);
+    computer_club.client_sat(as_time(12, 00), "client1", 3);
+    computer_club.client_sat(as_time(12, 30), "client1", 1);
 
     computer_club.client_left(as_time(13, 00), "client2");
 
-    computer_club.client_sat(as_time(13, 30), "client1", 2);
+    computer_club.client_sat(as_time(13, 30), "client1", 3);
     computer_club.client_left(as_time(14, 30), "client1");
 
     computer_club.close();
@@ -123,24 +123,24 @@ TEST(computer_club, change_table) {
                                "10:05 1 client1\n"
                                "10:10 1 client2\n"
 
-                               "10:30 2 client1 1\n"
-                               "11:00 2 client2 2\n"
+                               "10:30 2 client1 2\n"
+                               "11:00 2 client2 3\n"
 
-                               "11:30 2 client1 1\n"
+                               "11:30 2 client1 2\n"
                                "11:30 13 PlaceIsBusy\n"
-                               "12:00 2 client1 2\n"
+                               "12:00 2 client1 3\n"
                                "12:00 13 PlaceIsBusy\n"
-                               "12:30 2 client1 3\n"
+                               "12:30 2 client1 1\n"
 
                                "13:00 4 client2\n"
-                               "13:30 2 client1 2\n"
+                               "13:30 2 client1 3\n"
 
                                "14:30 4 client1\n"
 
                                "19:00\n"
-                               "1 2 02:00\n"
-                               "2 2 03:00\n"
-                               "3 2 02:00\n"
+                               "1 1 01:00\n"
+                               "2 2 02:00\n"
+                               "3 3 03:00\n"
                                },
               output.view());
 }

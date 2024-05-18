@@ -71,6 +71,7 @@ private:
     void error(time_util::time_t time, const std::string& message);
 
     void free_table(time_util::time_t time, table_info& table_info);
+    void free_table_and_take_next(time_util::time_t time, table_info& table_info, std::size_t table);
     void take_table(time_util::time_t time, clients_map_t::iterator client_it, std::size_t table);
 
 public:

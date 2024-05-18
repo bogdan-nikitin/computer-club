@@ -59,6 +59,10 @@ void computer_club::client_sat(time_util::time_t time, const std::string& client
         return;
     }
 
+    auto current_table = client_it->second;
+    if (current_table != 0) {
+        free_table_and_take_next(time, tables[current_table], current_table);
+    }
     take_table(time, client_it, table);
     ++busy_tables;
 }
@@ -97,13 +101,7 @@ void computer_club::client_left(time_util::time_t time, const std::string& clien
     clients.erase(client_it);
 
     auto& table_info = tables[table];
-    free_table(time, table_info);
-    if (pending_clients.empty()) {
-        return;
-    }
-    auto next_client = pending_clients.front();
-    pending_clients.pop();
-    client_sat_outgoing_event(time, next_client, table);
+    free_table_and_take_next(time, table_info, table);
 }
 
 void computer_club::client_left_outgoing_event(time_util::time_t time, clients_map_t::iterator client_it) {
@@ -133,6 +131,16 @@ void computer_club::free_table(time_util::time_t time, table_info& table_info) {
     table_info.total_time += time_delta;
     table_info.last_time = FREE_TABLE;
     --busy_tables;
+}
+
+void computer_club::free_table_and_take_next(time_util::time_t time, table_info& table_info, std::size_t table) {
+    free_table(time, table_info);
+    if (pending_clients.empty()) {
+        return;
+    }
+    auto next_client = pending_clients.front();
+    pending_clients.pop();
+    client_sat_outgoing_event(time, next_client, table);
 }
 
 void computer_club::close() {
