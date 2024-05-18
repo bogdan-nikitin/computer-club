@@ -13,12 +13,11 @@ bool read_line(std::istream& in, auto reader) {
     std::string line;
     std::getline(in, line);
     if (in.eof() || in.fail() || in.bad()) {
-        std::cout << "IN error\n";
         std::cout << line << '\n';
         return false;
     }
     std::stringstream stream{line};
-    if (!reader(stream) || !stream.eof() || stream.fail() || stream.bad()) {
+    if (!reader(stream) || stream.fail() || stream.bad()) {
         std::cout << line << '\n';
         return false;
     }
@@ -46,7 +45,7 @@ int main(int argc, char* argv[]) {
     if (!read_line(in, [&](auto &in) {
         open_time = time_util::read_time(in);
         close_time = time_util::read_time(in);
-            return open_time != time_util::INVALID_TIME && close_time != time_util::INVALID_TIME;
+            return open_time != time_util::INVALID_TIME && close_time != time_util::INVALID_TIME && open_time <= close_time;
         })) {
         return EXIT_FAILURE;
     };
@@ -54,31 +53,20 @@ int main(int argc, char* argv[]) {
     if (!read_line(in, [&](auto &in) {
                 in >> hour_cost;
             return true;
-                })) {
+    })) {
         return EXIT_FAILURE;
     }
     std::stringstream out;
     computer_club computer_club{open_time, close_time, hour_cost, table_count, out};
-    bool has_input = true;
-    while (has_input) {
+    while (true) {
         computer_club::read_result result;
         if (!read_line(in, [&](auto &in) {
             result = computer_club.read_event(in);
-            return result == computer_club::read_result::OK;
+            return result != computer_club::read_result::FAIL;
         })) {
             return EXIT_FAILURE;
         }
-        switch (result) {
-        case computer_club::read_result::OK:
-            break;
-        case computer_club::read_result::FAIL:
-            return EXIT_FAILURE;
-            break;
-        case computer_club::read_result::ERROR:
-            return EXIT_FAILURE;
-            break;
-        case computer_club::read_result::END:
-            has_input = false;
+        if (result == computer_club::read_result::END) {
             break;
         }
     }

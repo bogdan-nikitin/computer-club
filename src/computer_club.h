@@ -83,7 +83,6 @@ public:
     enum class read_result {
         OK,
         FAIL,
-        ERROR,
         END
     };
 

@@ -153,14 +153,12 @@ computer_club::read_result computer_club::read_event(std::istream& in) {
     std::size_t id;
     in >> id;
     if (in.eof()) {
+        in.clear();
         return read_result::END;
     }
     std::string client_name;
     in >> client_name;
-    if (in.bad()) {
-        return read_result::ERROR;
-    }
-    if (in.fail()) {
+    if (in.fail() || in.bad()) {
         return read_result::FAIL;
     }
     switch (id) {
@@ -170,10 +168,7 @@ computer_club::read_result computer_club::read_event(std::istream& in) {
         case 2:
             std::size_t table;
             in >> table;
-            if (in.bad()) {
-                return read_result::ERROR;
-            }
-            if (in.fail()) {
+            if (in.fail() || in.bad()) {
                 return read_result::FAIL;
             }
             client_sat(time, client_name, table);
