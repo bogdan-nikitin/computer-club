@@ -1,13 +1,13 @@
-#include <iostream>
-#include <iomanip>
-#include <cstdint>
-#include <string>
-#include <string_view>
-#include <charconv>
-
 #include "time_util.h"
 
-static time_util::time_t scan_part(const char *s) {
+#include <charconv>
+#include <cstdint>
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <string_view>
+
+static time_util::time_t scan_part(const char* s) {
     time_util::time_t part;
     auto result = std::from_chars(s, s + 2, part);
     if (result.ec == std::errc::invalid_argument) {
@@ -16,8 +16,7 @@ static time_util::time_t scan_part(const char *s) {
     return part;
 }
 
-
-time_util::time_t time_util::read_time(std::istream &in) {
+time_util::time_t time_util::read_time(std::istream& in) {
     char delimiter;
     std::string time;
     in >> time;
@@ -30,7 +29,7 @@ time_util::time_t time_util::read_time(std::istream &in) {
         return INVALID_TIME;
     }
     return as_time(hours, minutes);
-} 
+}
 
 void time_util::print_time(time_util::time_t time, std::ostream& out) {
     out.fill('0');
@@ -40,4 +39,3 @@ void time_util::print_time(time_util::time_t time, std::ostream& out) {
 time_util::time_t time_util::as_time(std::uint8_t hours, std::uint8_t minutes) {
     return hours * 60 + minutes;
 }
-

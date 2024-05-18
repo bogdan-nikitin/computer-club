@@ -1,16 +1,17 @@
 #ifndef COMPUTER_CLUB_H
 #define COMPUTER_CLUB_H
 
-#include <iostream>
-#include <string>
-#include <queue>
-#include <unordered_map>
-#include <string_view>
-#include <functional>
-#include <utility>
-
 #include "time_util.h"
 #include "util.h"
+
+#include <queue>
+
+#include <functional>
+#include <iostream>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <utility>
 
 class computer_club {
 private:
@@ -33,8 +34,8 @@ private:
     void print_event(event e);
     void print_time(time_util::time_t time);
 
-    template<typename ... Args>
-    void print(time_util::time_t time, event e, Args&& ... args) {
+    template <typename... Args>
+    void print(time_util::time_t time, event e, Args&&... args) {
         print_time(time);
         output << ' ';
         print_event(e);
@@ -71,13 +72,15 @@ private:
 
     void free_table(time_util::time_t time, table_info& table_info);
     void take_table(time_util::time_t time, clients_map_t::iterator client_it, std::size_t table);
+
 public:
     void client_came(time_util::time_t time, std::string client_name);
     void client_sat(time_util::time_t time, const std::string& client_name, std::size_t table);
     void client_waiting(time_util::time_t time, const std::string& client_name);
     void client_left(time_util::time_t time, const std::string& client_name);
 
-    computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost, std::size_t table_count, std::ostream& output);
+    computer_club(time_util::time_t open_time, time_util::time_t close_time, std::size_t hour_cost,
+                  std::size_t table_count, std::ostream& output);
     void close();
 
     time_util::time_t read_event(std::istream& in, time_util::time_t previous_event_time);

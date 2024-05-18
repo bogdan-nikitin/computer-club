@@ -4,14 +4,13 @@
 #include <cstdint>
 #include <iostream>
 
-
 namespace time_util {
-    using time_t = std::int16_t;
-    constexpr time_t INVALID_TIME = -1;
+using time_t = std::int16_t;
+constexpr time_t INVALID_TIME = -1;
 
-    time_t read_time(std::istream& in);
-    void print_time(time_t time, std::ostream& out);
-    time_t as_time(std::uint8_t hours, std::uint8_t minutes);
-}
+time_t read_time(std::istream& in);
+void print_time(time_t time, std::ostream& out);
+time_t as_time(std::uint8_t hours, std::uint8_t minutes);
+} // namespace time_util
 
 #endif
