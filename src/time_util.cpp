@@ -1,16 +1,32 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdint>
+#include <string>
+#include <string_view>
+#include <charconv>
 
 #include "time_util.h"
+
+static time_util::time_t scan_part(const char *s) {
+    time_util::time_t part;
+    auto result = std::from_chars(s, s + 2, part);
+    if (result.ec == std::errc::invalid_argument) {
+        return time_util::INVALID_TIME;
+    }
+    return part;
+}
 
 
 time_util::time_t time_util::read_time(std::istream &in) {
     char delimiter;
-    std::int16_t minutes;
-    std::int16_t hours;
-    in >> hours >> delimiter >> minutes;
-    if (delimiter != ':' || hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60) {
+    std::string time;
+    in >> time;
+    if (time.size() != 5 || time[2] != ':') {
+        return INVALID_TIME;
+    }
+    std::int16_t hours = scan_part(time.data());
+    std::int16_t minutes = scan_part(time.data() + 3);
+    if (hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60) {
         return INVALID_TIME;
     }
     return as_time(hours, minutes);

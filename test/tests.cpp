@@ -1,13 +1,36 @@
+#include <array>
+#include <gtest/gtest.h>
+#include <sstream>
+
 #include "computer_club.h"
 #include "time_util.h"
 
 using namespace time_util;
 
-#include <sstream>
 
-#include <gtest/gtest.h>
+TEST(time, bad_format) {
+    auto invalid = std::to_array({
+        "invalid",
+        "1:00",
+        "01:0",
+        "111:00",
+        "00:111",
+        "11.11",
+        "1:1",
+        ":11",
+        "11:",
+        "24:00",
+        "-1:00",
+        "00:-1",
+        "00:60",
+    });
+    for (auto s : invalid) {
+        std::stringstream stream{s};
+        EXPECT_EQ(time_util::INVALID_TIME, read_time(stream)) << s;
+    }
+}
 
-TEST(correctness, empty) {
+TEST(computer_club, empty) {
     std::stringstream output;
     computer_club computer_club{
         as_time(1, 1), 
@@ -23,7 +46,7 @@ TEST(correctness, empty) {
     output.view());
 }
 
-TEST(correctness, example) {
+TEST(computer_club, example) {
     std::stringstream output;
     computer_club computer_club{
         as_time(9, 0), 
@@ -75,7 +98,7 @@ TEST(correctness, example) {
     output.view());
 }
 
-TEST(correctness, sort) {
+TEST(main, sort) {
     std::stringstream output;
     computer_club computer_club{
         as_time(10, 0),

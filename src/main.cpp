@@ -19,7 +19,6 @@ bool read_line(std::istream& in, auto reader) {
     }
     std::stringstream stream{line};
     if (!reader(stream) || !stream.eof() || stream.fail() || stream.bad()) {
-        std::cout << stream.eof() << stream.fail() << '\n';
         std::cout << line << '\n';
         return false;
     }
