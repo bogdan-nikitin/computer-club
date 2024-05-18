@@ -11,11 +11,12 @@ using namespace time_util;
 TEST(time, bad_format) {
     auto invalid = std::to_array({
         "invalid",
+        "1",
         "1:00",
         "01:0",
         "111:00",
         "00:111",
-        "11.11",
+        "11#11",
         "1:1",
         ":11",
         "11:",
@@ -26,7 +27,26 @@ TEST(time, bad_format) {
     });
     for (auto s : invalid) {
         std::stringstream stream{s};
-        EXPECT_EQ(time_util::INVALID_TIME, read_time(stream)) << s;
+        EXPECT_EQ(INVALID_TIME, read_time(stream)) << "For time " << s;
+    }
+}
+
+TEST(time, correct) {
+    auto correct = std::to_array({
+        "23:59",
+        "01:02",
+        "13:08",
+        "15:25",
+        "00:00",
+        "04:54"
+    });
+    for (auto s : correct) {
+        std::stringstream in{s};
+        std::stringstream out;
+        auto time = read_time(in);
+        EXPECT_NE(INVALID_TIME, time) << "For time " << s;
+        print_time(time, out);
+        EXPECT_EQ(s, out.view()) << "For time " << s;
     }
 }
 
@@ -110,6 +130,34 @@ TEST(computer_club, gain) {
                                "1 1 01:00\n"
                                "2 1 00:59\n"
                                "3 2 01:01\n"
+                               },
+              output.view());
+}
+
+TEST(computer_club, not_empty_queue) {
+    std::stringstream output;
+    computer_club computer_club{as_time(10, 0), as_time(19, 00), 1, 1, output};
+
+    computer_club.client_came(as_time(10, 30), "client1");
+    computer_club.client_sat(as_time(11, 00), "client1", 1);
+
+    computer_club.client_came(as_time(12, 0), "client2");
+    computer_club.client_waiting(as_time(12, 05), "client2");
+
+    computer_club.close();
+    EXPECT_EQ(std::string_view{"10:00\n"
+
+                               "10:30 1 client1\n"
+                               "11:00 2 client1 1\n"
+
+                               "12:00 1 client2\n"
+                               "12:05 3 client2\n"
+
+                               "19:00 11 client1\n"
+                               "19:00 11 client2\n"
+
+                               "19:00\n"
+                               "1 8 08:00\n"
                                },
               output.view());
 }
@@ -206,7 +254,7 @@ TEST(computer_club, example) {
               output.view());
 }
 
-TEST(main, sort) {
+TEST(computer_club, sort) {
     std::stringstream output;
     computer_club computer_club{as_time(10, 0), as_time(12, 0), 1, 12, output};
 
